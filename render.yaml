@@ -1,0 +1,32 @@
+# ============================================================
+# Contactify — Render 배포 설정 (Blueprint)
+# https://dashboard.render.com → New → Blueprint → 이 리포지토리 선택
+# ------------------------------------------------------------
+# TURSO_* 환경변수는 sync:false 로 선언되어 있어 첫 배포 때
+# 대시보드에서 값을 입력하게 됩니다 (값은 대시보드에만 저장).
+#
+# 로컬/개발 환경에서는 TURSO_* 변수가 없으므로 기존처럼
+# SQLite/JSON 폴백 DB로 동작합니다.
+# ============================================================
+
+services:
+  - type: web
+    name: contactify
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/ping
+    envVars:
+      - key: TURSO_DATABASE_URL
+        sync: false
+      - key: TURSO_AUTH_TOKEN
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: APP_URL
+        sync: false
+      - key: NODE_VERSION
+        value: "20"

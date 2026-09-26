@@ -1,0 +1,22 @@
+{
+  "name": "contactify",
+  "version": "1.0.0",
+  "description": "Click-to-call digital business card builder — 디지털 명함 작성 및 프로필 생성 서비스",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node test/api-test.mjs"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.14.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "engines": {
+    "node": ">=16"
+  },
+  "keywords": ["digital-business-card", "business-card", "click-to-call", "vcard"],
+  "license": "MIT"
+}
