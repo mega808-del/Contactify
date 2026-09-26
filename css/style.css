@@ -1,0 +1,147 @@
+/* ============================================================
+   Contactify — Custom Styles (Tailwind 이후 로드)
+   ============================================================ */
+
+:root { --accent: #6366f1; }
+
+html { scroll-behavior: smooth; }
+
+/* ---------- Form field ---------- */
+/* ---------- Hide checkboxes (명함 항목 숨김) ---------- */
+.field-label { display:flex; align-items:center; gap:.45rem; flex-wrap:wrap; margin-bottom:.45rem; }
+.field-input {
+  width:100%; border-radius:.875rem; border:1px solid rgba(255,255,255,.1);
+  background:rgba(10,12,18,.6); padding:.7rem 1rem; font-size:.9rem; color:#e2e8f0;
+  transition:border-color .2s, box-shadow .2s, background .2s, transform .2s;
+}
+.field-input::placeholder { color:#475569; }
+.field-input:hover { border-color:rgba(255,255,255,.18); }
+.field-input:focus {
+  outline:none; border-color:rgba(129,140,248,.65); background:rgba(15,18,25,.9);
+  box-shadow:0 0 0 4px rgba(99,102,241,.15);
+}
+.field:focus-within .field-label { color:#a5b4fc; }
+.field { transition:transform .2s; }
+.field:focus-within { transform:translateY(-1px); }
+textarea.field-input { min-height:7rem; }
+
+/* ---------- Hide checkboxes (명함 항목 숨김) ---------- */
+.hide-check {
+  appearance:none; -webkit-appearance:none;
+  width:1.05rem; height:1.05rem; flex-shrink:0; margin:0;
+  border-radius:.3rem; border:1px solid rgba(255,255,255,.25);
+  background:rgba(255,255,255,.05); cursor:pointer; position:relative;
+  transition:background .15s, border-color .15s, box-shadow .15s;
+}
+.hide-check:hover { border-color:rgba(129,140,248,.65); }
+.hide-check:checked {
+  background:rgba(99,102,241,.9); border-color:rgba(129,140,248,.9);
+  box-shadow:0 0 0 3px rgba(99,102,241,.18);
+}
+.hide-check:checked::after {
+  content:""; position:absolute; left:.32rem; top:.09rem;
+  width:.28rem; height:.55rem; border:solid #fff; border-width:0 2px 2px 0;
+  transform:rotate(45deg);
+}
+
+/* ---------- Step badge / sections ---------- */
+.step-badge {
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  width:2rem; height:2rem; border-radius:.75rem; font-size:.85rem; font-weight:700; color:#fff;
+  background:linear-gradient(135deg,#6366f1,#8b5cf6); box-shadow:0 4px 14px rgba(99,102,241,.35);
+}
+.card-section { transition:border-color .3s, box-shadow .3s; }
+.card-section:hover { border-color:rgba(255,255,255,.16); }
+
+/* ---------- Image upload ---------- */
+.upload-box { position:relative; cursor:pointer; }
+.upload-box.dragover {
+  border-radius:1rem; outline:2px dashed rgba(129,140,248,.7); outline-offset:-6px;
+  background:rgba(99,102,241,.08); transition:all .15s ease;
+}
+.upload-box::before {
+  content:""; position:absolute; inset:0; border-radius:1rem;
+  border:1.5px dashed rgba(255,255,255,.14); pointer-events:none; transition:border-color .2s;
+}
+.upload-box:hover::before { border-color:rgba(129,140,248,.55); }
+.upload-box.has-image::before { border-color:transparent; }
+.upload-icon { font-size:1.4rem; transition:transform .25s; }
+.upload-box:hover .upload-icon { transform:scale(1.2); }
+.upload-box input[type="file"] { position:absolute; inset:0; width:100%; height:100%; opacity:0; cursor:pointer; }
+
+/* ---------- Tag chips ---------- */
+.tag-chip {
+  display:inline-flex; align-items:center; gap:.3rem; border-radius:9999px;
+  background:rgba(99,102,241,.16); border:1px solid rgba(129,140,248,.35);
+  padding:.2rem .3rem .2rem .7rem; font-size:.78rem; font-weight:600; color:#c7d2fe;
+  animation:chipIn .25s cubic-bezier(.34,1.56,.64,1);
+}
+.tag-chip .chip-x {
+  display:flex; align-items:center; justify-content:center;
+  width:1.15rem; height:1.15rem; border-radius:9999px; font-size:.7rem; line-height:1;
+  color:#a5b4fc; transition:background .15s, color .15s, transform .15s;
+}
+.tag-chip .chip-x:hover { background:rgba(244,63,94,.25); color:#fda4af; transform:scale(1.1); }
+@keyframes chipIn { from { opacity:0; transform:scale(.7) translateY(4px); } to { opacity:1; transform:scale(1) translateY(0); } }
+
+/* ---------- Career rows / links ---------- */
+.career-row, .link-row {
+  display:flex; gap:.5rem; align-items:center;
+  animation:rowIn .3s ease both;
+}
+.career-row { flex-wrap:wrap; }
+@keyframes rowIn { from { opacity:0; transform:translateY(-6px); } to { opacity:1; transform:translateY(0); } }
+.row-del {
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  width:2.5rem; height:2.6rem; border-radius:.8rem;
+  border:1px solid rgba(244,63,94,.25); background:rgba(244,63,94,.08);
+  color:#fda4af; font-size:1rem; transition:background .15s, transform .15s;
+}
+.row-del:hover { background:rgba(244,63,94,.2); transform:scale(1.05); }
+.link-row-item {
+  display:flex; align-items:center; justify-content:space-between; gap:.75rem;
+  border-radius:.9rem; border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.04);
+  padding:.65rem 1rem; font-size:.85rem; animation:rowIn .3s ease both;
+}
+
+/* ---------- Buttons ---------- */
+.save-btn::after {
+  content:""; position:absolute; top:0; left:-80%; width:50%; height:100%;
+  background:linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+  transform:skewX(-20deg); transition:left .5s ease;
+}
+.save-btn:hover::after { left:130%; }
+
+/* ---------- Contact rows on card ---------- */
+.contact-ico {
+  display:flex; align-items:center; justify-content:center; flex-shrink:0;
+  width:2.4rem; height:2.4rem; border-radius:.8rem; font-size:1rem;
+  border:1px solid rgba(255,255,255,.08); background:rgba(255,255,255,.05);
+}
+
+/* ---------- Card 3D / shine ---------- */
+.card3d { transform-style:preserve-3d; transition:transform .25s ease-out; will-change:transform; }
+.card-shine {
+  background:linear-gradient(115deg, transparent 25%, rgba(255,255,255,.06) 45%, rgba(255,255,255,.12) 50%, rgba(255,255,255,.06) 55%, transparent 75%);
+  background-size:250% 250%; animation:shine 7s ease-in-out infinite;
+}
+@keyframes shine { 0%,100% { background-position:0% 0%; } 50% { background-position:100% 100%; } }
+
+.logo-fallback { display:none; }
+.logo-fallback.show { display:flex; }
+
+/* ---------- Toast ---------- */
+#toast.show { opacity:1; transform:translate(-50%,0); }
+
+/* ---------- Print ---------- */
+@media print {
+  body * { visibility:hidden; }
+  #card, #card * { visibility:visible; }
+  #card { position:fixed; inset:0 auto auto 50%; transform:translateX(-50%); margin-top:2rem;
+          border-color:rgba(0,0,0,.2); box-shadow:none; }
+}
+
+/* ---------- Reduced motion ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }
+}

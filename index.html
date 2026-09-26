@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contactify — 디지털 명함</title>
+  <meta name="description" content="Contactify: 프로필 정보를 입력하면 클릭 한 번으로 전화 걸기가 가능한 디지털 명함을 만들어 드립니다.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%236366f1'/><text x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='Arial'>C</text></svg>">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Pretendard', 'Poppins', 'Inter', 'system-ui', 'sans-serif'] },
+          colors: {
+            ink: { 950:'#050609', 900:'#0a0c12', 850:'#0f1219', 800:'#161a23', 700:'#1e2431', 600:'#2a3142' },
+            gold: { DEFAULT:'#e7c988', soft:'#f3e3bc', deep:'#c8a45c' }
+          }
+        }
+      }
+    }
+  </script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-ink-950 text-slate-200 antialiased min-h-screen relative">
+
+  <div class="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
+    <div class="absolute -top-40 -left-32 h-[28rem] w-[28rem] rounded-full bg-indigo-600/20 blur-[130px]"></div>
+    <div class="absolute top-1/3 -right-40 h-[26rem] w-[26rem] rounded-full bg-violet-600/10 blur-[120px]"></div>
+    <div class="absolute bottom-0 left-1/4 h-[24rem] w-[24rem] rounded-full bg-fuchsia-600/10 blur-[130px]"></div>
+    <div class="absolute inset-0 opacity-[0.5]" style="background-image:radial-gradient(rgba(148,163,184,.08) 1px, transparent 1px); background-size:28px 28px;"></div>
+  </div>
+
+  <!-- ======================= HEADER ======================= -->
+  <header class="sticky top-0 z-40 border-b border-white/5 bg-ink-950/70 backdrop-blur-xl">
+    <div class="mx-auto flex h-16 max-w-5xl items-center justify-between px-5">
+      <button id="header-brand" class="group flex items-center gap-2.5">
+        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 font-bold text-white shadow-lg shadow-indigo-500/30 transition-transform duration-300 group-hover:rotate-6">C</span>
+        <span class="text-xl font-extrabold tracking-tight text-white">Contact<span class="text-indigo-400">ify</span></span>
+      </button>
+      <span class="hidden rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-400 lg:inline">Digital Business Card Builder</span>
+      <div id="authArea" class="flex items-center gap-2"><!-- js/sync.js 가 렌더링 --></div>
+    </div>
+  </header>
+
+  <main class="mx-auto w-full max-w-5xl px-4 py-10 sm:px-6">
+
+    <!-- ======================= EDITOR VIEW ======================= -->
+    <section id="editorView" class="mb-16 text-center">
+      <span class="inline-flex items-center gap-1.5 rounded-full border border-indigo-400/20 bg-indigo-400/10 px-3.5 py-1.5 text-xs font-medium text-indigo-300">
+        <span class="relative flex h-1.5 w-1.5"><span class="absolute inline-flex h-full w-full animate-ping rounded-full bg-indigo-400 opacity-75"></span><span class="relative inline-flex h-1.5 w-1.5 rounded-full bg-indigo-400"></span></span>
+        클릭 한 번으로 전화 걸기가 가능한 명함
+      </span>
+      <h1 class="mt-5 text-3xl font-extrabold leading-tight tracking-tight text-white sm:text-5xl">당신만의 디지털 명함을<br class="sm:hidden"> 지금 만들어 보세요</h1>
+      <p class="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-slate-400 sm:text-base">기본 정보, 소개, 태그, 이력, 영상까지 — 입력한 내용이 곧장 고급스러운 명함으로 완성됩니다.</p>
+
+      <form id="cardForm" class="mt-10 text-left" novalidate>
+
+        <!-- ① 기본 정보 -->
+        <div class="card-section rounded-3xl border border-white/10 bg-ink-850/80 p-6 shadow-2xl shadow-black/40 backdrop-blur sm:p-8">
+          <div class="section-head mb-6 flex items-center gap-3">
+            <span class="step-badge">1</span>
+            <div>
+              <h2 class="text-lg font-bold text-white">기본 정보</h2>
+              <p class="text-xs text-slate-500">이름과 연락 수단을 입력하세요. 전화번호는 명함에서 탭하면 바로 전화가 걸립니다.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div class="field">
+              <label for="inpName" class="field-label">이름 <span class="text-indigo-400">*</span></label>
+              <input id="inpName" name="name" type="text" placeholder="홍길동" autocomplete="name" class="field-input" required>
+            </div>
+            <div class="field">
+              <label for="inpTitle" class="field-label"><input type="checkbox" class="hide-check" data-hide="title" title="체크 시 명함에서 숨김">직책</label>
+              <input id="inpTitle" name="title" type="text" placeholder="프로덕트 디자이너" class="field-input">
+            </div>
+            <div class="field">
+              <label for="inpCompany" class="field-label"><input type="checkbox" class="hide-check" data-hide="company" title="체크 시 명함에서 숨김">회사명</label>
+              <input id="inpCompany" name="company" type="text" placeholder="Contactify 주식회사" autocomplete="organization" class="field-input">
+            </div>
+            <div class="field">
+              <label for="inpEmail" class="field-label"><input type="checkbox" class="hide-check" data-hide="email" title="체크 시 명함에서 숨김">이메일</label>
+              <input id="inpEmail" name="email" type="email" placeholder="you@company.com" autocomplete="email" class="field-input">
+            </div>
+            <div class="field">
+              <label for="inpPhone" class="field-label">전화번호 <span class="text-indigo-400">*</span></label>
+              <input id="inpPhone" name="phone" type="tel" inputmode="tel" placeholder="010-1234-5678" autocomplete="tel" class="field-input" required>
+            </div>
+            <div class="field">
+              <label for="inpHomepage" class="field-label"><input type="checkbox" class="hide-check" data-hide="homepage" title="체크 시 명함에서 숨김">홈페이지 URL</label>
+              <input id="inpHomepage" name="homepage" type="url" placeholder="https://your-site.com" class="field-input">
+            </div>
+            <div class="field sm:col-span-2">
+              <label for="inpAddress" class="field-label"><input type="checkbox" class="hide-check" data-hide="address" title="체크 시 명함에서 숨김">주소 <span class="text-slate-600">(상세 주소 포함)</span></label>
+              <input id="inpAddress" name="address" type="text" placeholder="서울특별시 강남구 테헤란로 123, 4층 (역삼동)" autocomplete="street-address" class="field-input">
+            </div>
+          </div>
+
+          <p class="mt-1 text-xs leading-relaxed text-slate-500">
+            <span class="mr-1.5 inline-block h-3 w-3 translate-y-[2px] rounded-[4px] border border-white/25 bg-white/5"></span>
+            체크한 항목은 명함 화면에서 숨겨집니다 — <span class="text-slate-400">이름·전화번호는 항상 표시됩니다.</span>
+          </p>
+
+          <div class="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
+            <div class="field">
+              <label class="field-label"><input type="checkbox" class="hide-check" data-hide="photo" title="체크 시 명함에서 숨김">프로필 사진 <span class="text-slate-600">(선택)</span></label>
+              <div class="upload-box" data-target="inpPhoto">
+                <input type="file" id="inpPhoto" accept="image/*" class="hidden">
+                <div class="upload-empty flex flex-col items-center justify-center gap-2 py-6">
+                  <span class="upload-icon">👤</span>
+                  <span class="text-sm font-medium text-slate-300">클릭하여 프로필 사진 업로드</span>
+                  <span class="text-xs text-slate-500">PNG · JPG · WebP</span>
+                </div>
+                <div class="upload-preview hidden items-center gap-4">
+                  <img alt="프로필 사진 미리보기" class="h-16 w-16 rounded-2xl border border-white/10 object-cover shadow-lg">
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-slate-200">이미지 선택됨</p>
+                    <div class="mt-2 flex gap-2">
+                      <button type="button" class="rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300 transition hover:bg-white/10">변경</button>
+                      <button type="button" class="remove-image rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-1 text-xs text-rose-300 transition hover:bg-rose-500/20">삭제</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="field">
+              <label class="field-label"><input type="checkbox" class="hide-check" data-hide="logo" title="체크 시 명함에서 숨김">회사 로고 <span class="text-slate-600">(선택)</span></label>
+              <div class="upload-box" data-target="inpLogo">
+                <input type="file" id="inpLogo" accept="image/*" class="hidden">
+                <div class="upload-empty flex flex-col items-center justify-center gap-2 py-6">
+                  <span class="upload-icon">🏢</span>
+                  <span class="text-sm font-medium text-slate-300">클릭하여 회사 로고 업로드</span>
+                  <span class="text-xs text-slate-500">PNG · JPG · SVG</span>
+                </div>
+                <div class="upload-preview hidden items-center gap-4">
+                  <img alt="회사 로고 미리보기" class="h-16 w-16 rounded-2xl border border-white/10 bg-white/5 object-contain p-1.5 shadow-lg">
+                  <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm font-medium text-slate-200">이미지 선택됨</p>
+                    <div class="mt-2 flex gap-2">
+                      <button type="button" class="rounded-lg border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300 transition hover:bg-white/10">변경</button>
+                      <button type="button" class="remove-image rounded-lg border border-rose-500/20 bg-rose-500/10 px-3 py-1 text-xs text-rose-300 transition hover:bg-rose-500/20">삭제</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② 소개 및 태그 -->
+        <div class="card-section mt-6 rounded-3xl border border-white/10 bg-ink-850/80 p-6 shadow-2xl shadow-black/40 backdrop-blur sm:p-8">
+          <div class="section-head mb-6 flex items-center gap-3">
+            <span class="step-badge">2</span>
+            <div>
+              <h2 class="text-lg font-bold text-white">소개 및 태그</h2>
+              <p class="text-xs text-slate-500">자기소개를 작성하고, 전문 분야를 태그로 표현하세요.</p>
+            </div>
+          </div>
+          <div class="field">
+            <label for="inpBio" class="field-label"><input type="checkbox" class="hide-check" data-hide="bio" title="체크 시 명함에서 숨김">자기소개</label>
+            <textarea id="inpBio" name="bio" rows="5" maxlength="800" placeholder="안녕하세요. 사용자 경험 설계를 좋아하는 디자이너입니다. 브랜드 아이덴티티와 프로덕트 디자인을 함께 다루고 있습니다." class="field-input resize-none leading-relaxed"></textarea>
+            <p class="mt-1.5 text-right text-xs text-slate-500"><span id="bioCount">0</span> / 800자</p>
+          </div>
+          <div class="field mt-2" data-controller="tags">
+            <label for="inpTag" class="field-label"><input type="checkbox" class="hide-check" data-hide="tags" title="체크 시 명함에서 숨김">태그</label>
+            <div id="tagWrap" class="flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-ink-900/60 px-3 py-2.5 transition-colors focus-within:border-indigo-400/60 focus-within:ring-2 focus-within:ring-indigo-500/20">
+              <span id="tagPlaceholder" class="py-0.5 text-sm text-slate-600">+ 태그를 입력해 보세요 (예: UX, 브랜딩)</span>
+              <input id="inpTag" type="text" placeholder="태그 입력 후 Enter" class="min-w-[7rem] flex-1 border-0 bg-transparent p-1 text-sm text-slate-200 placeholder:text-slate-600 focus:outline-none focus:ring-0">
+            </div>
+            <p class="mt-1.5 text-xs text-slate-500">Enter 또는 [추가] 버튼으로 태그를 등록하고, 칩의 ✕로 삭제할 수 있습니다.</p>
+            <div class="mt-3 flex justify-end">
+              <button type="button" id="btnAddTag" class="rounded-xl bg-white/10 px-4 py-2 text-sm font-medium text-slate-200 transition hover:bg-white/20">＋ 추가</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ③ 이력 · 링크 -->
+        <div class="card-section mt-6 rounded-3xl border border-white/10 bg-ink-850/80 p-6 shadow-2xl shadow-black/40 backdrop-blur sm:p-8">
+          <div class="section-head mb-6 flex items-center gap-3">
+            <span class="step-badge">3</span>
+            <div>
+              <h2 class="text-lg font-bold text-white">이력 · 영상 · 링크</h2>
+              <p class="text-xs text-slate-500">경력 사항과 소개 영상, 외부 링크를 자유롭게 추가하세요.</p>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label"><input type="checkbox" class="hide-check" data-hide="careers" title="체크 시 명함에서 숨김">이력 목록</label>
+            <div id="careerList" class="space-y-3"></div>
+            <button type="button" id="btnAddCareer" class="add-row-btn mt-3 w-full rounded-xl border border-dashed border-white/15 bg-white/[0.03] py-2.5 text-sm font-medium text-slate-300 transition hover:border-indigo-400/40 hover:bg-indigo-500/10 hover:text-indigo-300">＋ 이력 추가</button>
+          </div>
+
+          <div class="mt-8 border-t border-white/5 pt-6">
+            <label for="inpYoutube" class="field-label"><input type="checkbox" class="hide-check" data-hide="youtube" title="체크 시 명함에서 숨김">YouTube 영상</label>
+            <div class="flex flex-col gap-3 sm:flex-row">
+              <input id="inpYoutube" type="url" placeholder="https://www.youtube.com/watch?v=..." class="field-input flex-1">
+              <button type="button" id="btnYoutube" class="rounded-xl bg-rose-500/90 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-rose-900/40 transition hover:bg-rose-500 sm:w-auto">미리보기</button>
+            </div>
+            <div id="ytPreviewWrap" class="hidden mt-4 overflow-hidden rounded-2xl border border-white/10 bg-black/40">
+              <div class="relative w-full pt-[56.25%]">
+                <iframe id="ytFrame" class="absolute inset-0 h-full w-full" src="" title="YouTube preview" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-8 border-t border-white/5 pt-6">
+            <label class="field-label"><input type="checkbox" class="hide-check" data-hide="links" title="체크 시 명함에서 숨김">커스텀 링크</label>
+            <div class="flex flex-col gap-3 sm:flex-row">
+              <input id="inpLinkTitle" type="text" placeholder="링크 제목 (예: 포트폴리오)" class="field-input sm:max-w-[45%]">
+              <input id="inpLinkUrl" type="url" placeholder="https://..." class="field-input flex-1">
+              <button type="button" id="btnAddLink" class="rounded-xl bg-white/10 px-5 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-white/20">＋ 추가</button>
+            </div>
+            <div id="linkList" class="mt-3 flex flex-col gap-2"></div>
+          </div>
+        </div>
+
+        <!-- 데이터 관리 (백업 · 이관) -->
+        <div class="card-section mt-6 rounded-3xl border border-white/10 bg-ink-850/80 p-6 shadow-2xl shadow-black/40 backdrop-blur sm:p-8">
+          <div class="section-head mb-6 flex items-center gap-3">
+            <span class="step-badge">4</span>
+            <div>
+              <h2 class="text-lg font-bold text-white">데이터 관리 <span class="text-xs font-normal text-slate-500">· 백업 &amp; 기기 이관</span></h2>
+              <p class="text-xs text-slate-500">JSON 백업 파일로 명함 전체를 내보내거나, 새 기기에서 그대로 불러올 수 있습니다.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 gap-3 sm:grid-cols-3">
+            <button type="button" id="btnExportJson" class="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:border-indigo-400/40 hover:bg-indigo-500/10">📦 JSON 내보내기</button>
+            <button type="button" id="btnExportCsv" class="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:border-indigo-400/40 hover:bg-indigo-500/10">📊 CSV 내보내기</button>
+            <button type="button" id="btnExportVcf" class="rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:border-indigo-400/40 hover:bg-indigo-500/10">🪪 vCard(.vcf) 내보내기</button>
+          </div>
+          <div class="mt-4 flex flex-col gap-3 rounded-2xl border border-dashed border-white/15 bg-white/[0.03] p-4 sm:flex-row sm:items-center">
+            <div class="min-w-0 flex-1">
+              <p class="text-sm font-semibold text-slate-200">📥 데이터 가져오기</p>
+              <p class="text-xs text-slate-500">JSON / CSV / .vcf 백업 파일을 선택하세요. (JSON은 덮어쓰기/합치기 선택 가능)</p>
+            </div>
+            <input type="file" id="inpImport" accept=".json,.csv,.vcf,.vcard,text/csv,application/json,text/vcard" class="import-input w-full text-sm text-slate-400 file:mr-3 file:rounded-lg file:border-0 file:bg-indigo-500/20 file:px-4 file:py-2 file:text-xs file:font-semibold file:text-indigo-300 hover:file:bg-indigo-500/30 sm:w-auto">
+          </div>
+          <div id="mergeChoice" class="mt-3 hidden rounded-xl border border-amber-400/25 bg-amber-400/10 p-4 text-sm">
+            <p class="font-semibold text-amber-200">백업에 <span id="mergeIncoming">0</span>장의 명함이 있습니다. 어떻게 가져올까요?</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <button type="button" id="btnMergeAdd" class="rounded-lg bg-emerald-500/90 px-4 py-2 text-xs font-bold text-white hover:bg-emerald-500">합치기 (기존 + 백업)</button>
+              <button type="button" id="btnMergeReplace" class="rounded-lg bg-rose-500/90 px-4 py-2 text-xs font-bold text-white hover:bg-rose-500">덮어쓰기 (백업으로 교체)</button>
+              <button type="button" id="btnMergeCancel" class="rounded-lg border border-white/15 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-white/10">취소</button>
+            </div>
+          </div>
+          <p class="mt-3 text-xs text-slate-600">💡 기기 변경 시: 기존 기기에서 내보내기 → 새 기기에서 가져오기. 또는 로그인하면 자동 동기화됩니다.</p>
+        </div>
+
+        <!-- ④ Actions -->
+        <div class="mt-10 flex flex-col-reverse items-stretch justify-end gap-3 sm:flex-row sm:items-center">
+          <button type="button" id="btnReset" class="rounded-xl border border-white/10 bg-white/5 px-6 py-3 text-sm font-medium text-slate-300 transition hover:bg-white/10">처음부터</button>
+          <button type="submit" id="btnSaveView" class="save-btn relative overflow-hidden rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-8 py-3 text-sm font-bold text-white shadow-xl shadow-indigo-600/30 transition hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-indigo-500/40">💾 저장 &amp; 보기</button>
+        </div>
+        <p class="mt-3 text-center text-xs text-slate-600">입력 정보는 이 브라우저(LocalStorage)에만 저장되며, 서버 실행 시 <code class="rounded bg-white/5 px-1">npm start</code>로 DB 연동 모드를 사용할 수 있습니다.</p>
+      </form>
+    </section>
+
+    <!-- ======================= MY CARDS (DECK) ======================= -->
+    <section id="deckSection" class="mt-4 hidden text-left">
+      <div class="mb-4 flex items-end justify-between">
+        <div>
+          <h2 class="text-lg font-bold text-white">내 명함 목록</h2>
+          <p class="text-xs text-slate-500">카드를 눌러 다시 열고, 로그인하면 어느 기기에서든 자동 동기화됩니다.</p>
+        </div>
+        <span class="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-400"><span id="deckCount">0</span>장</span>
+      </div>
+      <div id="deckGrid" class="grid gap-3 sm:grid-cols-2"></div>
+      <p id="deckEmpty" class="rounded-2xl border border-dashed border-white/10 bg-white/[0.02] p-8 text-center text-sm text-slate-500">아직 저장한 명함이 없어요 — 위 폼에서 첫 명함을 만들어 보세요.</p>
+    </section>
+
+    <!-- ======================= CARD VIEW ======================= -->
+    <section id="viewView" class="hidden">
+      <div class="mx-auto max-w-md">
+        <div class="mb-4 text-center">
+          <span class="inline-flex items-center gap-1.5 rounded-full border border-gold/25 bg-gold/10 px-3.5 py-1.5 text-[11px] font-semibold tracking-wide text-gold">
+            <span>✦</span> CONTACTIFY CARD
+          </span>
+        </div>
+
+        <article id="card" class="card3d relative overflow-hidden rounded-[2rem] border border-white/10 bg-gradient-to-b from-ink-800 to-ink-900 p-8 shadow-2xl shadow-black/60">
+          <div class="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-indigo-500/15 blur-3xl"></div>
+          <div class="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-violet-500/10 blur-3xl"></div>
+          <div class="card-shine pointer-events-none absolute inset-0 rounded-[2rem]"></div>
+
+          <div class="relative">
+            <div class="flex items-start justify-between gap-4">
+              <img id="vLogo" src="" alt="회사 로고" class="hidden h-12 w-12 rounded-xl border border-white/10 bg-white/5 object-contain p-1.5">
+              <span class="logo-fallback hidden h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-lg font-bold text-gold"></span>
+              <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-xs font-bold tracking-widest text-slate-500">C</span>
+            </div>
+
+            <div class="mt-6 flex items-center gap-5">
+              <div class="relative shrink-0">
+                <img id="vPhoto" src="" alt="프로필 사진" class="hidden h-24 w-24 rounded-2xl border-2 border-white/15 object-cover shadow-xl shadow-black/50">
+                <div id="vPhotoFallback" class="flex h-24 w-24 items-center justify-center rounded-2xl border-2 border-white/10 bg-gradient-to-br from-indigo-500/30 to-violet-600/30 text-4xl font-extrabold text-white/90">?</div>
+              </div>
+              <div class="min-w-0">
+                <h2 id="vName" class="truncate text-2xl font-extrabold tracking-tight text-white">이름</h2>
+                <p id="vRole" class="mt-0.5 truncate text-sm font-medium text-indigo-300"></p>
+                <p id="vCompany" class="truncate text-sm text-slate-400"></p>
+              </div>
+            </div>
+
+            <p id="vBio" class="mt-6 hidden border-l-2 border-indigo-500/40 pl-4 text-sm leading-relaxed text-slate-300"></p>
+
+            <div id="vTags" class="mt-5 flex flex-wrap gap-2"></div>
+
+            <!-- 연락처: tel:, mailto:, website, address -->
+            <div class="mt-6 space-y-2.5 border-t border-white/5 pt-5 text-sm">
+              <a id="vTel" href="#" class="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-white/5">
+                <span class="contact-ico">📞</span>
+                <span class="min-w-0">
+                  <span class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Phone · 탭하여 전화</span>
+                  <span id="vTelText" class="block truncate font-semibold text-slate-200 group-hover:text-emerald-300"></span>
+                </span>
+                <span class="ml-auto shrink-0 text-xs text-slate-500 group-hover:text-emerald-300">전화 ›</span>
+              </a>
+              <a id="vEmail" href="#" class="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-white/5">
+                <span class="contact-ico">✉️</span>
+                <span class="min-w-0">
+                  <span class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Email</span>
+                  <span id="vEmailText" class="block truncate font-semibold text-slate-200 group-hover:text-indigo-300"></span>
+                </span>
+              </a>
+              <a id="vHomepage" href="#" target="_blank" rel="noopener" class="group flex items-center gap-3 rounded-xl px-3 py-2.5 transition hover:bg-white/5">
+                <span class="contact-ico">🌐</span>
+                <span class="min-w-0">
+                  <span class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Website</span>
+                  <span id="vHomepageText" class="block truncate font-semibold text-slate-200 group-hover:text-indigo-300"></span>
+                </span>
+              </a>
+              <div id="vAddressRow" class="hidden flex items-center gap-3 rounded-xl px-3 py-2.5">
+                <span class="contact-ico">📍</span>
+                <span class="min-w-0">
+                  <span class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Address</span>
+                  <span id="vAddress" class="block font-medium leading-relaxed text-slate-300"></span>
+                </span>
+              </div>
+            </div>
+
+            <div id="vCareerWrap" class="mt-6 hidden border-t border-white/5 pt-5">
+              <h3 class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Career · 이력</h3>
+              <ol id="vCareerList" class="space-y-3.5"></ol>
+            </div>
+
+            <div id="vLinksWrap" class="mt-6 hidden border-t border-white/5 pt-5">
+              <h3 class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Links · 바로가기</h3>
+              <div id="vLinks" class="grid gap-2"></div>
+            </div>
+
+            <div id="vVideoWrap" class="mt-6 hidden border-t border-white/5 pt-5">
+              <h3 class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Video · 소개 영상</h3>
+              <div class="overflow-hidden rounded-2xl border border-white/10 bg-black/50">
+                <div class="relative w-full pt-[56.25%]">
+                  <iframe id="vYtFrame" class="absolute inset-0 h-full w-full" src="" title="YouTube" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+              </div>
+            </div>
+          </div>
+        </article>
+
+        <div class="mt-6 flex flex-col gap-3">
+          <div class="grid grid-cols-3 gap-3">
+            <button type="button" id="btnSave" class="rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs font-semibold text-slate-300 transition hover:bg-white/10">💾 저장</button>
+            <button type="button" id="btnShare" class="rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs font-semibold text-slate-300 transition hover:bg-white/10">🔗 링크 복사</button>
+            <button type="button" id="btnVCard" class="rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs font-semibold text-slate-300 transition hover:bg-white/10">🪪 vCard</button>
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <button type="button" id="btnPrint" class="rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs font-semibold text-slate-300 transition hover:bg-white/10">🖨️ 인쇄</button>
+            <button type="button" id="btnEdit" class="rounded-xl border border-white/10 bg-white/5 px-3 py-3 text-xs font-semibold text-slate-300 transition hover:bg-white/10">✏️ 수정</button>
+          </div>
+          <button type="button" id="btnNew" class="rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 px-3 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-600/30 transition hover:-translate-y-0.5">＋ 새 명함 만들기</button>
+        </div>
+        <p class="mt-4 text-center text-[11px] leading-relaxed text-slate-600">전화번호는 스마트폰에서 탭하면 전화 앱이 실행됩니다 (tel: 프로토콜)<br>PC에서는 통화 앱 연결 안내가 표시될 수 있습니다.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-white/5 py-8 text-center text-xs text-slate-600">
+    <span class="font-semibold text-slate-500">Contactify</span> · Click-to-Call Digital Business Card
+  </footer>
+
+  <!-- ======================= AUTH MODAL ======================= -->
+  <div id="authModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/70 p-4 backdrop-blur-sm">
+    <div class="auth-card w-full max-w-sm rounded-3xl border border-white/10 bg-ink-850 p-7 shadow-2xl">
+      <div class="mb-5 flex items-center justify-between">
+        <h3 class="text-lg font-bold text-white">Contactify 계정</h3>
+        <button type="button" id="btnAuthClose" class="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 transition hover:bg-white/10 hover:text-white" aria-label="닫기">✕</button>
+      </div>
+      <div class="mb-5 grid grid-cols-2 rounded-xl border border-white/10 bg-ink-900 p-1 text-sm font-semibold">
+        <button type="button" id="tabLogin" class="auth-tab rounded-lg py-2 text-slate-400 transition">로그인</button>
+        <button type="button" id="tabSignup" class="auth-tab rounded-lg py-2 text-slate-400 transition">회원가입</button>
+      </div>
+      <form id="authForm" class="space-y-3" novalidate>
+        <div id="authNicknameField" class="field hidden">
+          <label for="authNickname" class="field-label">이름(닉네임)</label>
+          <input id="authNickname" type="text" placeholder="홍길동" class="field-input" autocomplete="name">
+        </div>
+        <div class="field">
+          <label for="authEmail" class="field-label">이메일</label>
+          <input id="authEmail" type="email" placeholder="you@example.com" class="field-input" autocomplete="email" required>
+        </div>
+        <div class="field">
+          <label for="authPassword" class="field-label">비밀번호</label>
+          <input id="authPassword" type="password" placeholder="6자 이상" class="field-input" autocomplete="current-password" required>
+        </div>
+        <p id="authError" class="hidden rounded-lg border border-rose-500/25 bg-rose-500/10 px-3 py-2 text-xs text-rose-300"></p>
+        <button type="submit" id="btnAuthSubmit" class="w-full rounded-xl bg-gradient-to-r from-indigo-500 to-violet-600 py-3 text-sm font-bold text-white shadow-lg shadow-indigo-600/30 transition hover:-translate-y-0.5">로그인</button>
+      </form>
+      <div class="my-4 flex items-center gap-3 text-[11px] text-slate-600">
+        <span class="h-px flex-1 bg-white/10"></span>또는<span class="h-px flex-1 bg-white/10"></span>
+      </div>
+      <button type="button" id="btnGoogleLogin" class="flex w-full items-center justify-center gap-2.5 rounded-xl border border-white/15 bg-white py-3 text-sm font-bold text-slate-800 transition hover:bg-slate-100">
+        <svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 12.955 4 4 12.955 4 24s8.955 20 20 20 20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"/><path fill="#FF3D00" d="M6.306 14.691l6.571 4.819C14.655 15.108 18.961 12 24 12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4 16.318 4 9.656 8.337 6.306 14.691z"/><path fill="#4CAF50" d="M24 44c5.166 0 9.86-1.977 13.409-5.192l-6.19-5.238C29.211 35.091 26.715 36 24 36c-5.202 0-9.619-3.317-11.283-7.946l-6.522 5.025C9.505 39.556 16.227 44 24 44z"/><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.166-4.087 5.571.001-.001.002-.001.003-.002l6.19 5.238C36.971 39.205 44 34 44 24c0-1.341-.138-2.65-.389-3.917z"/></svg>
+        구글 계정으로 계속하기
+      </button>
+      <p class="mt-4 text-center text-[11px] leading-relaxed text-slate-600">로그인하면 명함이 계정에 저장되어<br>새 기기에서 로그인만 하면 자동으로 동기화됩니다.</p>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="pointer-events-none fixed left-1/2 top-20 z-50 -translate-x-1/2 translate-y-[-12px] rounded-xl border border-white/10 bg-ink-800/95 px-5 py-2.5 text-sm font-medium text-slate-100 opacity-0 shadow-2xl backdrop-blur transition-all duration-300">메시지</div>
+
+  <script src="js/sync.js"></script>
+  <script src="js/backup.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
