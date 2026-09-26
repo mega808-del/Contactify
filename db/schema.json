@@ -1,0 +1,50 @@
+{
+  "version": "1.0",
+  "description": "Contactify — 사용자별 명함 저장 스키마 (MySQL 기준, SQLite/Postgres 동일 구조)",
+  "users": {
+    "table": "users",
+    "columns": {
+      "id": "VARCHAR(40) PRIMARY KEY — 서버 생성 (u_...)",
+      "email": "VARCHAR(120) NOT NULL UNIQUE — 로그인 ID",
+      "password_hash": "VARCHAR(200) NOT NULL — scrypt(salt:hash)",
+      "nickname": "VARCHAR(40)",
+      "created_at": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+    }
+  },
+  "tokens": {
+    "table": "tokens",
+    "columns": {
+      "token": "CHAR(48) PRIMARY KEY — Bearer 토큰 (랜덤 hex)",
+      "user_id": "VARCHAR(40) NOT NULL — FK → users.id (ON DELETE CASCADE)",
+      "created_at": "TIMESTAMP DEFAULT CURRENT_TIMESTAMP"
+    }
+  },
+  "cards": {
+    "table": "cards",
+    "columns": {
+      "id": "VARCHAR(40) PRIMARY KEY — 클라이언트 생성 가능 (c_...), 기기 간 병합 키",
+      "owner_id": "VARCHAR(40) NOT NULL — FK → users.id, 사용자(User ID)별 매핑",
+      "name": "VARCHAR(60) NOT NULL — 이름",
+      "title": "VARCHAR(60) — 직책",
+      "company": "VARCHAR(80) — 회사명",
+      "email": "VARCHAR(120)",
+      "phone": "VARCHAR(30) NOT NULL — tel: 클릭투콜용",
+      "address": "VARCHAR(300) — 상세 주소 포함",
+      "homepage": "VARCHAR(300)",
+      "bio": "TEXT — 자기소개",
+      "youtube": "VARCHAR(300)",
+      "tags": "JSON — [{id, tag}] 최대 12개",
+      "careers": "JSON — [{id, period, desc}] 최대 10개",
+      "links": "JSON — [{id, title, url}] 최대 10개",
+      "photo_data": "LONGTEXT (MEDIUMTEXT 권장) — 프로필 Data URL",
+      "logo_data": "TEXT — 로고 Data URL",
+      "created_at": "TIMESTAMP",
+      "updated_at": "TIMESTAMP — 동기화 충돌 시 최신 우선 기준"
+    },
+    "indexes": ["idx_cards_owner (owner_id)", "idx_cards_owner_updated (owner_id, updated_at)"]
+  },
+  "relations": [
+    "users 1 ─ N cards (cards.owner_id → users.id)",
+    "users 1 ─ N tokens (tokens.user_id → users.id)"
+  ]
+}
