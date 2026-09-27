@@ -29,8 +29,58 @@ const el = {
   vCareerWrap: $('#vCareerWrap'), vCareerList: $('#vCareerList'),
   vLinksWrap: $('#vLinksWrap'), vLinks: $('#vLinks'),
   vVideoWrap: $('#vVideoWrap'), vYtFrame: $('#vYtFrame'),
+  mvView: $('#mvView'), mvTel: $('#mvTel'), mvTelText: $('#mvTelText'),
+  mvAddress: $('#mvAddress'), mvCompany: $('#mvCompany'), mvEmail: $('#mvEmail'),
+  mvEmailLink: $('#mvEmailLink'), mvHomepage: $('#mvHomepage'), mvHomepageLink: $('#mvHomepageLink'),
+  mvTitle: $('#mvTitle'), mvBio: $('#mvBio'), mvTags: $('#mvTags'),
+  mvCareers: $('#mvCareers'), mvLinks: $('#mvLinks'),
+  mobileHideGrid: $('#mobileHideGrid'), btnMvAll: $('#btnMvAll'), btnMvEssential: $('#btnMvEssential'),
   deckGrid: $('#deckGrid'), deckCount: $('#deckCount'), deckEmpty: $('#deckEmpty'),
 };
+
+/* ---------- 표시 항목 설정 (숨김 그리드) ----------
+ * 인라인 hide-check 체크박스들과 같은 소스(card.hidden)를 읽고 쓰는 또 다른 UI.
+ * 체크 = 그 항목을 명함에서 숨김 (PC·모바일 공통). 이름·전화번호는 항상 표시.
+ */
+const HIDE_ITEMS = [
+  { key: 'title',    label: '💼 직책' },
+  { key: 'company',  label: '🏢 회사명' },
+  { key: 'email',    label: '✉️ 이메일' },
+  { key: 'homepage', label: '🌐 홈페이지' },
+  { key: 'address',  label: '📍 주소' },
+  { key: 'bio',      label: '📝 자기소개' },
+  { key: 'tags',     label: '🏷️ 태그' },
+  { key: 'careers',  label: '📅 이력' },
+  { key: 'links',    label: '🔗 커스텀 링크' },
+];
+const HIDE_ESSENTIAL = ['title', 'company', 'email', 'homepage'];   /* 추천: 모바일에서 자주 안 쓰는 항목만 숨김 */
+
+/* 인라인 hide-check → 설정 그리드 체크 상태 반영 */
+function syncGridFromInline() {
+  document.querySelectorAll('#mobileHideGrid input[data-hide]').forEach((cb) => {
+    const inline = document.querySelector(`#cardForm .hide-check[data-hide="${cb.dataset.hide}"]`);
+    if (inline) cb.checked = inline.checked;
+  });
+}
+/* 설정 그리드 → 인라인 hide-check 체크 상태 반영 */
+function syncInlineFromGrid() {
+  document.querySelectorAll('#mobileHideGrid input[data-hide]').forEach((cb) => {
+    const inline = document.querySelector(`#cardForm .hide-check[data-hide="${cb.dataset.hide}"]`);
+    if (inline) inline.checked = cb.checked;
+  });
+}
+function renderMobileHideGrid() {
+  if (!el.mobileHideGrid) return;
+  el.mobileHideGrid.innerHTML = HIDE_ITEMS.map((it) => `
+    <label class="flex cursor-pointer items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-xs font-medium text-slate-300 transition hover:border-indigo-400/40">
+      <input type="checkbox" data-hide="${it.key}" class="accent-indigo-500">
+      <span>${it.label}</span>
+    </label>`).join('');
+  /* 그리드 체크 변경 → 인라인 동기화 */
+  el.mobileHideGrid.addEventListener('change', (e) => {
+    if (e.target.matches('input[data-hide]')) syncInlineFromGrid();
+  });
+}
 
 /* ---------- 상태 ---------- */
 const state = {
@@ -143,6 +193,8 @@ function applyToEditor(card) {
   state.links = (card?.links || []).map((l) => ({ ...l }));
   state.images = { photo: card?.images?.photo || '', logo: card?.images?.logo || '' };
   fillHidden(card?.hidden);
+  /* 설정 그리드도 인라인 체크 상태와 동기화 */
+  syncGridFromInline();
   fillForm(card || {});
   restoreImagePreviews();
   fillEditorDynamic();
@@ -359,6 +411,67 @@ function renderCard(d) {
   const embed = hid('youtube') ? '' : CT.ytEmbed(d.youtube);
   el.vVideoWrap.classList.toggle('hidden', !embed);
   if (embed) el.vYtFrame.src = embed;
+
+  renderMobileView(d);
+}
+
+/* ============================================================
+   모바일 9:16 세로 명함 뷰
+   - 표시 순서: 이름(상단 공통) → 전화 → 주소 → 회사 → 이메일 → 홈페이지 → …
+   - 표시 항목 설정(체크박스)에서 체크된 것만 표시, 해제 시 PC에서만 표시
+   ============================================================ */
+function renderMobileView(d) {
+  if (!el.mvView) return;
+  /* 체크로 숨긴 항목(설정창/인라인 공통, PC·모바일 동일 적용) + 값이 없는 항목도 숨김 */
+  const hid = (k) => !!(d.hidden && d.hidden[k]);
+
+  const toggleRows = {
+    tel: true,   /* 전화번호는 항상 표시 */
+    address: !hid('address') && !!d.address,
+    company: !hid('company') && !!d.company,
+    email: !hid('email') && !!d.email,
+    homepage: !hid('homepage') && !!d.homepage,
+    title: !hid('title') && !!d.title,
+    bio: !hid('bio') && !!d.bio,
+    tags: !hid('tags') && (d.tags || []).length > 0,
+    careers: !hid('careers') && (d.careers || []).length > 0,
+    links: !hid('links') && (d.links || []).length > 0,
+  };
+
+  /* 행 토글 — mv-mark 텍스트로 행 매칭 */
+  el.mvView.querySelectorAll('.mv-seq').forEach((row) => {
+    const mark = row.querySelector('.mv-mark');
+    if (!mark) return;
+    const key = mark.textContent.trim();
+    row.classList.toggle('hidden', !toggleRows[key]);
+  });
+
+  /* 값 채우기 */
+  const tel = CT.telHref(d.phone);
+  if (tel) { el.mvTel.href = tel; el.mvTelText.textContent = d.phone; }
+
+  el.mvAddress.textContent = d.address || '';
+  el.mvCompany.textContent = d.company || '';
+  el.mvEmail.textContent = d.email || '';
+  el.mvEmailLink.href = d.email ? `mailto:${d.email}` : '#';
+  const home = CT.safeUrl(d.homepage);
+  el.mvHomepage.textContent = (d.homepage || '').replace(/^https?:\/\//i, '');
+  el.mvHomepageLink.href = home || '#';
+  el.mvTitle.textContent = d.title || '';
+  el.mvBio.textContent = d.bio || '';
+
+  el.mvTags.innerHTML = (d.tags || []).map((t) => `<span class="tag-chip">${CT.esc(t.tag)}</span>`).join('');
+
+  const careers = d.careers || [];
+  el.mvCareers.innerHTML = careers.map((c) => `
+    <p class="text-sm text-slate-300"><span class="font-semibold text-indigo-300">${CT.esc(c.period)}</span> ${CT.esc(c.desc)}</p>`).join('');
+
+  const links = d.links || [];
+  el.mvLinks.innerHTML = links.map((l) => `
+    <a href="${CT.esc(CT.safeUrl(l.url))}" target="_blank" rel="noopener"
+       class="inline-flex max-w-full items-center gap-1 rounded-lg border border-white/10 bg-white/[0.05] px-2.5 py-1 text-xs font-medium text-slate-200">
+      <span class="truncate">${CT.esc(l.title)}</span><span class="text-slate-500">↗</span>
+    </a>`).join('');
 }
 
 /* ============================================================
@@ -442,6 +555,20 @@ function downloadCurrentVCard() {
    ============================================================ */
 function bindEvents() {
   el.headerBrand.addEventListener('click', () => { applyToEditor(null); showEditor(); });
+
+  /* 표시 항목 설정 프리셋 버튼 (체크 = 숨김) */
+  el.btnMvAll?.addEventListener('click', () => {
+    document.querySelectorAll('#mobileHideGrid input[data-hide]').forEach((cb) => { cb.checked = false; });
+    syncInlineFromGrid();
+    CT.toast('모든 항목을 표시합니다');
+  });
+  el.btnMvEssential?.addEventListener('click', () => {
+    document.querySelectorAll('#mobileHideGrid input[data-hide]').forEach((cb) => {
+      cb.checked = HIDE_ESSENTIAL.includes(cb.dataset.hide);   /* 추천 항목만 숨김 */
+    });
+    syncInlineFromGrid();
+    CT.toast('직책·회사명·이메일·홈페이지를 숨기고 핵심만 표시합니다');
+  });
 
   /* 저장 & 보기 */
   el.form.addEventListener('submit', async (e) => {
@@ -570,6 +697,7 @@ function init() {
   setupImageUpload('inpPhoto');
   setupImageUpload('inpLogo');
   addCareerRow();
+  renderMobileHideGrid();
   bindEvents();
   loadDeck();
 

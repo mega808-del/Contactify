@@ -141,6 +141,47 @@ textarea.field-input { min-height:7rem; }
           border-color:rgba(0,0,0,.2); box-shadow:none; }
 }
 
+/* ---------- Mobile 9:16 vertical card view ----------
+ * #mvView: 모바일(lg 미만)에서만 표시. 9:16 종횡비 카드 안에서
+ * 항목 순서를 이름→전화→주소→회사→이메일→홈페이지→… 로 강제 정렬.
+ * mv-mark hidden 은 JS가 체크박스 설정에 따라 토글하는 숨김 플래그.
+ */
+#mvView {
+  aspect-ratio: 9 / 16;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 지정 순서: 이름(항상 카드 상단 렌더) → 전화 → 주소 → 회사 → 이메일 → 홈페이지 → 나머지 */
+#mvView .mv-seq-1 { order: 1; }   /* tel */
+#mvView .mv-seq-2 { order: 2; }   /* address */
+#mvView .mv-seq-3 { order: 3; }   /* company */
+#mvView .mv-seq-4 { order: 4; }   /* email */
+#mvView .mv-seq-5 { order: 5; }   /* homepage */
+#mvView .mv-seq-6 { order: 6; }   /* title */
+#mvView .mv-seq-7 { order: 7; }   /* bio */
+#mvView .mv-seq-8 { order: 8; }   /* tags */
+#mvView .mv-seq-9 { order: 9; }   /* careers */
+#mvView .mv-seq-10 { order: 10; } /* links */
+
+/* 순서에서 밀려난 여백 제거 — order 재배치 후 mt-* 이 원치 않는 빈틈을 만들지 않도록 */
+#mvView .mv-seq { margin-top: 0; }
+#mvView .mv-seq + .mv-seq { margin-top: .25rem; }
+
+/* 오버플로우 시 스크롤 (9:16 고정, 내용이 많으면 내부 스크롤) */
+#mvView { overflow-y: auto; }
+
+.mv-ico { flex-shrink: 0; font-size: 1.05rem; line-height: 1.4; }
+
+/* 오버레이 링크(tel/mailto/홈페이지)가 row 전체를 클릭 가능하게 */
+#mvView .mv-seq { position: relative; }
+#mvView .mv-seq > a.absolute { z-index: 1; }
+
+/* PC에서는 모바일 뷰 숨김 (Tailwind lg:hidden 과 동일 역할, 로컬 CSS 백업) */
+@media (min-width: 1024px) {
+  #mvView { display: none !important; }
+}
+
 /* ---------- Reduced motion ---------- */
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration:.01ms !important; transition-duration:.01ms !important; }

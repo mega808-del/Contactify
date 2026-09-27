@@ -216,6 +216,23 @@
           </div>
         </div>
 
+        <!-- 표시 항목 설정 (모바일 뷰) -->
+        <div class="card-section mt-6 rounded-3xl border border-white/10 bg-ink-850/80 p-6 shadow-2xl shadow-black/40 backdrop-blur sm:p-8">
+          <div class="section-head mb-2 flex items-center gap-3">
+            <span class="step-badge">4</span>
+            <div>
+              <h2 class="text-lg font-bold text-white">표시 항목 설정 <span class="text-xs font-normal text-slate-500">· 명함에 표시할 정보</span></h2>
+              <p class="text-xs text-slate-500"><strong class="text-amber-300">체크하면 숨겨집니다</strong> — 필요 없는 항목을 체크하세요. 설정은 PC·모바일 명함 모두에 적용됩니다.</p>
+            </div>
+          </div>
+          <div id="mobileHideGrid" class="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3"></div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button type="button" id="btnMvAll" class="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/10">숨김 해제 (전체 표시)</button>
+            <button type="button" id="btnMvEssential" class="rounded-lg border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 transition hover:bg-white/10">추천 프리셋 (직책·회사·이메일·홈페이지 숨김)</button>
+          </div>
+          <p class="mt-3 text-xs text-slate-600">💡 이름과 전화번호는 명함의 필수 정보라서 항상 표시됩니다. 폼 위쪽 각 입력 항목의 체크박스와 이 설정창은 서로 연동됩니다.</p>
+        </div>
+
         <!-- 데이터 관리 (백업 · 이관) -->
         <div class="card-section mt-6 rounded-3xl border border-white/10 bg-ink-850/80 p-6 shadow-2xl shadow-black/40 backdrop-blur sm:p-8">
           <div class="section-head mb-6 flex items-center gap-3">
@@ -340,6 +357,40 @@
               </div>
             </div>
 
+            <!-- ================= 모바일 9:16 세로 명함 뷰 (모바일 전용) ================= -->
+            <div id="mvView" class="mv-view mt-6 border-t border-white/5 pt-5 lg:hidden">
+              <div class="mv-seq mv-seq-1 flex items-start gap-3 rounded-xl px-2 py-2">
+                <span class="mv-ico">📞</span>
+                <span class="min-w-0 flex-1">
+                  <span class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Phone · 탭하여 전화</span>
+                  <span id="mvTelText" class="block truncate font-semibold text-slate-100"></span>
+                </span>
+                <span class="mv-cta shrink-0 rounded-lg bg-emerald-500/15 px-2.5 py-1 text-[11px] font-bold text-emerald-300">전화</span>
+                <a id="mvTel" href="#" class="absolute inset-0" aria-label="전화 걸기"></a>
+                <span class="mv-mark hidden">tel</span>
+              </div>
+              <div class="mv-seq mv-seq-2 flex items-start gap-3 rounded-xl px-2 py-2">
+                <span class="mv-ico">📍</span>
+              <span class="min-w-0 flex-1">
+                  <span class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Address</span>
+                  <span id="mvAddress" class="block font-medium leading-relaxed text-slate-200"></span>
+                </span>
+                <span class="mv-mark hidden">address</span>
+              </div>
+              <div class="mv-seq mv-seq-3 flex items-start gap-3 rounded-xl px-2 py-2"><span class="mv-ico">🏢</span><span class="min-w-0 flex-1"><span class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Company</span><span id="mvCompany" class="block truncate font-semibold text-slate-200"></span></span><span class="mv-mark hidden">company</span></div>
+              <div class="mv-seq mv-seq-4 flex items-start gap-3 rounded-xl px-2 py-2"><span class="mv-ico">✉️</span><span class="min-w-0 flex-1"><span class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Email</span><span id="mvEmail" class="block truncate font-semibold text-slate-200"></span></span>
+                <a id="mvEmailLink" href="#" class="absolute inset-0" aria-label="이메일 보내기"></a>
+                <span class="mv-mark hidden">email</span></div>
+              <div class="mv-seq mv-seq-5 flex items-start gap-3 rounded-xl px-2 py-2"><span class="mv-ico">🌐</span><span class="min-w-0 flex-1"><span class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Website</span><span id="mvHomepage" class="block truncate font-semibold text-slate-200"></span></span>
+                <a id="mvHomepageLink" href="#" target="_blank" rel="noopener" class="absolute inset-0" aria-label="홈페이지 열기"></a>
+                <span class="mv-mark hidden">homepage</span></div>
+              <div class="mv-seq mv-seq-6 flex items-start gap-3 rounded-xl px-2 py-2"><span class="mv-ico">💼</span><span class="min-w-0 flex-1"><span class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Title</span><span id="mvTitle" class="block truncate font-semibold text-slate-200"></span></span><span class="mv-mark hidden">title</span></div>
+              <div class="mv-seq mv-seq-7 flex items-start gap-3 rounded-xl px-2 py-2"><span class="mv-ico">📝</span><span class="min-w-0 flex-1"><span class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500">Bio</span><span id="mvBio" class="block font-medium leading-relaxed text-slate-300"></span></span><span class="mv-mark hidden">bio</span></div>
+              <div class="mv-seq mv-seq-8 flex items-start gap-3 rounded-xl px-2 py-2"><span class="mv-ico">🏷️</span><span id="mvTags" class="flex flex-wrap gap-1.5"></span><span class="mv-mark hidden">tags</span></div>
+              <div class="mv-seq mv-seq-9 flex items-start gap-3 rounded-xl px-2 py-2"><span class="mv-ico">📅</span><span id="mvCareers" class="min-w-0 flex-1"></span><span class="mv-mark hidden">careers</span></div>
+              <div class="mv-seq mv-seq-10 flex items-start gap-3 rounded-xl px-2 py-2"><span class="mv-ico">🔗</span><span id="mvLinks" class="min-w-0 flex-1"></span><span class="mv-mark hidden">links</span></div>
+            </div>
+            <!-- ================= /모바일 뷰 ================= -->
             <div id="vCareerWrap" class="mt-6 hidden border-t border-white/5 pt-5">
               <h3 class="mb-3 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Career · 이력</h3>
               <ol id="vCareerList" class="space-y-3.5"></ol>
