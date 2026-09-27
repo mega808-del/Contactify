@@ -1,0 +1,143 @@
+{
+  "users": [
+    {
+      "id": "u_muj12v20_xrcte7",
+      "email": "t1790465750579@example.com",
+      "password_hash": "6bd2a0c73743fcadd9c7d26c0a402bf7:1406f68f0335a29f944273b3ba1a39122d72e4d3d6830078b8bd75facdaa82ddcc1cf56d86426f84a4f95b9249940fb2b3fb352a3263da44e11fd3bf805de191",
+      "nickname": "길동",
+      "provider": null,
+      "provider_id": null,
+      "created_at": "2026-09-26T23:35:50.712Z"
+    },
+    {
+      "id": "u_muj12vf2_6eq0zx",
+      "email": "u21790465751118@ex.com",
+      "password_hash": "2d7f97e80e4c7b930139acbffd394809:1396b0f6da97336ac64c926aace97c950031390fd3d688e5a932f391afb01d0abb0be232d91abadd9348c02aeac4fd4aff0b59c90b4cf05c616ea23c63d891d7",
+      "nickname": "u21790465751118",
+      "provider": null,
+      "provider_id": null,
+      "created_at": "2026-09-26T23:35:51.182Z"
+    },
+    {
+      "id": "u_muj12vm4_v4iyec",
+      "email": "hide-test-1790465751308@example.com",
+      "password_hash": "c85e6de710d37aca713a535a0d238e9f:4f9be7c93f3daee91a3da512de36c62e8f09ec2175249115dd32ae31bbccb15cc4ffc01c89e9b446b321f3916fa3bab47fba9f6277dbef69408d4ecd909793c2",
+      "nickname": "hide-test-1790465751308",
+      "provider": null,
+      "provider_id": null,
+      "created_at": "2026-09-26T23:35:51.436Z"
+    }
+  ],
+  "tokens": {
+    "8c86b0f68e1edb92ba242010ea1cb36eef1a12e92e6391cb": {
+      "userId": "u_muj12v20_xrcte7",
+      "createdAt": "2026-09-26T23:35:50.715Z"
+    },
+    "8515367632db1e8b16a605274b156da8ba3bf121a3a07fa9": {
+      "userId": "u_muj12v20_xrcte7",
+      "createdAt": "2026-09-26T23:35:50.784Z"
+    },
+    "8ea08892a7bd343d9218c9ea28064b9293b8c448fe43a2cc": {
+      "userId": "u_muj12vf2_6eq0zx",
+      "createdAt": "2026-09-26T23:35:51.184Z"
+    },
+    "6360bf9a46a2097cda60f356e59b105ac48dcc3f73e9864b": {
+      "userId": "u_muj12vm4_v4iyec",
+      "createdAt": "2026-09-26T23:35:51.439Z"
+    }
+  },
+  "cards": [
+    {
+      "id": "c_sync_a",
+      "name": "김철수",
+      "title": "",
+      "company": "",
+      "email": "",
+      "phone": "010-1111-2222",
+      "address": "",
+      "homepage": "",
+      "bio": "",
+      "youtube": "",
+      "tags": [],
+      "careers": [],
+      "links": [],
+      "images": {
+        "photo": "",
+        "logo": ""
+      },
+      "hidden": {},
+      "ownerId": "u_muj12v20_xrcte7",
+      "createdAt": "2026-09-26T23:35:50.982Z",
+      "updatedAt": "2026-09-26T23:35:50.977Z"
+    },
+    {
+      "id": "c_muj12vc0_kohcyh",
+      "name": "이유리",
+      "title": "매니저",
+      "company": "XYZ",
+      "email": "",
+      "phone": "010-2222-3333",
+      "address": "서울시 종로구",
+      "homepage": "",
+      "bio": "",
+      "youtube": "",
+      "tags": [],
+      "careers": [],
+      "links": [],
+      "images": {
+        "photo": "",
+        "logo": ""
+      },
+      "hidden": {},
+      "ownerId": "u_muj12v20_xrcte7",
+      "createdAt": "2026-09-26T23:35:51.071Z",
+      "updatedAt": "2026-09-26T23:35:51.071Z"
+    },
+    {
+      "id": "c_muj12vcg_5pmjp7",
+      "name": "박민수",
+      "title": "",
+      "company": "",
+      "email": "",
+      "phone": "010-5555-6666",
+      "address": "대전시 둔산로 50",
+      "homepage": "",
+      "bio": "",
+      "youtube": "",
+      "tags": [],
+      "careers": [],
+      "links": [],
+      "images": {
+        "photo": "",
+        "logo": ""
+      },
+      "hidden": {},
+      "ownerId": "u_muj12v20_xrcte7",
+      "createdAt": "2026-09-26T23:35:51.087Z",
+      "updatedAt": "2026-09-26T23:35:51.087Z"
+    },
+    {
+      "id": "c_muj12vmq_pjdl31",
+      "name": "숨김테스트",
+      "title": "",
+      "company": "이제보임",
+      "email": "",
+      "phone": "010-1111-2222",
+      "address": "",
+      "homepage": "",
+      "bio": "",
+      "youtube": "",
+      "tags": [],
+      "careers": [],
+      "links": [],
+      "images": {
+        "photo": "",
+        "logo": ""
+      },
+      "hidden": {},
+      "ownerId": "u_muj12vm4_v4iyec",
+      "createdAt": "2026-09-26T23:35:51.467Z",
+      "updatedAt": "2026-09-26T23:35:51.467Z"
+    }
+  ]
+}
